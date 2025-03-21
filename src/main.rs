@@ -4,15 +4,17 @@ use std::io;
 fn main() {
     let mut input = String::new();
     io::stdin().read_to_string(&mut input).unwrap();
-    execute_brainfuck(&input);
+    let result = execute_brainfuck(&input);
+    print!("{}", result);
 }
 
-fn execute_brainfuck(code: &str) {
+fn execute_brainfuck(code: &str) -> String {
     let mut memory = vec![0u8; 30000];
     let mut pointer: usize = 0;
     let mut pc: usize = 0;
-
     let mut loop_stack = Vec::new();
+
+    let mut result = String::new();
 
     while pc < code.len() {
         match code.as_bytes()[pc] as char {
@@ -20,7 +22,7 @@ fn execute_brainfuck(code: &str) {
             '<' => pointer -= 1,
             '+' => memory[pointer] = memory[pointer].wrapping_add(1),
             '-' => memory[pointer] = memory[pointer].wrapping_sub(1),
-            '.' => print!("{}", memory[pointer] as char),
+            '.' => result.push(memory[pointer] as char),
             ',' => {
                 let mut input = [0];
                 std::io::stdin().read_exact(&mut input).expect("Failed to read from stdin");
@@ -52,4 +54,6 @@ fn execute_brainfuck(code: &str) {
         }
         pc += 1;
     }
+
+    result
 }
